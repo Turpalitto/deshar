@@ -45,7 +45,9 @@ class HomeScreen extends ConsumerWidget {
                     children: [
                       _StatChip(icon: '🔥', value: '${profile.streakDays}', label: 'серия'),
                       const SizedBox(width: 8),
-                      _StatChip(icon: '⭐', value: '${profile.xp}', label: 'XP'),
+                      _StatChip(icon: '⭐', value: '${profile.level}', label: 'уровень'),
+                      const SizedBox(width: 8),
+                      _StatChip(icon: '🪙', value: '${profile.coins}', label: 'монеты'),
                       const SizedBox(width: 8),
                       _StatChip(
                         icon: '❤️',
