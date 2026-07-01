@@ -57,11 +57,20 @@ class UserProfileEntity extends Equatable {
     this.level = 1,
     this.streakDays = 0,
     this.stars = 0,
+    this.coins = 0,
     this.dailyGoalMinutes = 10,
+    this.dailyGoalWords = 5,
     this.todayMinutes = 0,
+    this.wordsLearnedToday = 0,
     this.avatarId = 'fox_default',
+    this.currentWorldId = 'meadow',
     this.unlockedWorlds = const ['meadow'],
     this.achievements = const [],
+    this.lastActiveDate,
+    this.dailyGiftClaimed = false,
+    this.weeklyXp = const [0, 0, 0, 0, 0, 0, 0],
+    this.isPremium = false,
+    this.lessonsCompletedTotal = 0,
   });
 
   final AppMode mode;
@@ -70,11 +79,23 @@ class UserProfileEntity extends Equatable {
   final int level;
   final int streakDays;
   final int stars;
+  final int coins;
   final int dailyGoalMinutes;
+  final int dailyGoalWords;
   final int todayMinutes;
+  final int wordsLearnedToday;
   final String avatarId;
+  final String currentWorldId;
   final List<String> unlockedWorlds;
   final List<String> achievements;
+  final String? lastActiveDate;
+  final bool dailyGiftClaimed;
+  final List<int> weeklyXp;
+  final bool isPremium;
+  final int lessonsCompletedTotal;
+
+  int get dailyGoalProgress =>
+      dailyGoalWords > 0 ? (wordsLearnedToday / dailyGoalWords * 100).round().clamp(0, 100) : 0;
 
   UserProfileEntity copyWith({
     AppMode? mode,
@@ -83,9 +104,20 @@ class UserProfileEntity extends Equatable {
     int? level,
     int? streakDays,
     int? stars,
+    int? coins,
     int? dailyGoalMinutes,
+    int? dailyGoalWords,
     int? todayMinutes,
+    int? wordsLearnedToday,
     String? avatarId,
+    String? currentWorldId,
+    List<String>? unlockedWorlds,
+    List<String>? achievements,
+    String? lastActiveDate,
+    bool? dailyGiftClaimed,
+    List<int>? weeklyXp,
+    bool? isPremium,
+    int? lessonsCompletedTotal,
   }) {
     return UserProfileEntity(
       mode: mode ?? this.mode,
@@ -94,14 +126,23 @@ class UserProfileEntity extends Equatable {
       level: level ?? this.level,
       streakDays: streakDays ?? this.streakDays,
       stars: stars ?? this.stars,
+      coins: coins ?? this.coins,
       dailyGoalMinutes: dailyGoalMinutes ?? this.dailyGoalMinutes,
+      dailyGoalWords: dailyGoalWords ?? this.dailyGoalWords,
       todayMinutes: todayMinutes ?? this.todayMinutes,
+      wordsLearnedToday: wordsLearnedToday ?? this.wordsLearnedToday,
       avatarId: avatarId ?? this.avatarId,
-      unlockedWorlds: unlockedWorlds,
-      achievements: achievements,
+      currentWorldId: currentWorldId ?? this.currentWorldId,
+      unlockedWorlds: unlockedWorlds ?? this.unlockedWorlds,
+      achievements: achievements ?? this.achievements,
+      lastActiveDate: lastActiveDate ?? this.lastActiveDate,
+      dailyGiftClaimed: dailyGiftClaimed ?? this.dailyGiftClaimed,
+      weeklyXp: weeklyXp ?? this.weeklyXp,
+      isPremium: isPremium ?? this.isPremium,
+      lessonsCompletedTotal: lessonsCompletedTotal ?? this.lessonsCompletedTotal,
     );
   }
 
   @override
-  List<Object?> get props => [mode, xp, level];
+  List<Object?> get props => [mode, xp, level, streakDays];
 }

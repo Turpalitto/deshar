@@ -7,6 +7,7 @@ import '../../domain/usecases/learning_usecases.dart';
 import '../../domain/entities/learning_entities.dart';
 import '../../domain/entities/word_entity.dart';
 import '../../domain/entities/enums.dart';
+import '../../core/services/progress_stats_service.dart';
 
 // --- Data sources ---
 final assetDictSourceProvider = Provider((_) => AssetDictionaryDataSource());
@@ -66,7 +67,44 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfileEntity>> {
   final UserRepository _repo;
 
   Future<void> _load() async {
-    state = AsyncValue.data(await _repo.getProfile());
+    var profile = await _repo.getProfile();
+    profile = _syncDaily(profile);
+    await _repo.saveProfile(profile);
+    state = AsyncValue.data(profile);
+  }
+
+  String _todayKey() {
+    final n = DateTime.now();
+    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')}';
+  }
+
+  UserProfileEntity _syncDaily(UserProfileEntity p) {
+    final today = _todayKey();
+    if (p.lastActiveDate == today) return p;
+
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final yKey =
+        '${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}';
+    final streak = p.lastActiveDate == yKey ? p.streakDays + 1 : 1;
+
+    final weekly = List<int>.from(p.weeklyXp);
+    if (weekly.length != 7) {
+      weekly
+        ..clear()
+        ..addAll(List.filled(7, 0));
+    } else {
+      weekly.removeAt(0);
+      weekly.add(0);
+    }
+
+    return p.copyWith(
+      lastActiveDate: today,
+      streakDays: streak,
+      wordsLearnedToday: 0,
+      todayMinutes: 0,
+      dailyGiftClaimed: false,
+      weeklyXp: weekly,
+    );
   }
 
   Future<void> setMode(AppMode mode) async {
@@ -86,15 +124,72 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfileEntity>> {
   Future<void> addXp(int xp, int stars) async {
     final current = state.value ?? const UserProfileEntity();
     final newXp = current.xp + xp;
+    final weekly = List<int>.from(current.weeklyXp);
+    if (weekly.length == 7) weekly[6] += xp;
     final updated = current.copyWith(
       xp: newXp,
       level: (newXp / 100).floor() + 1,
       stars: current.stars + stars,
+      coins: current.coins + stars,
+      weeklyXp: weekly,
     );
     await _repo.saveProfile(updated);
     state = AsyncValue.data(updated);
   }
+
+  Future<void> recordWordLearned({int xp = 8, int coins = 2}) async {
+    final current = state.value ?? const UserProfileEntity();
+    final newXp = current.xp + xp;
+    final weekly = List<int>.from(current.weeklyXp);
+    if (weekly.length == 7) weekly[6] += xp;
+    final updated = current.copyWith(
+      xp: newXp,
+      level: (newXp / 100).floor() + 1,
+      coins: current.coins + coins,
+      stars: current.stars + coins,
+      wordsLearnedToday: current.wordsLearnedToday + 1,
+      weeklyXp: weekly,
+      lastActiveDate: _todayKey(),
+    );
+    await _repo.saveProfile(updated);
+    state = AsyncValue.data(updated);
+  }
+
+  Future<void> claimDailyGift() async {
+    final current = state.value ?? const UserProfileEntity();
+    if (current.dailyGiftClaimed) return;
+    final updated = current.copyWith(
+      dailyGiftClaimed: true,
+      coins: current.coins + 15,
+      xp: current.xp + 20,
+    );
+    await _repo.saveProfile(updated);
+    state = AsyncValue.data(updated);
+  }
+
+  Future<void> setCurrentWorld(String worldId) async {
+    final current = state.value ?? const UserProfileEntity();
+    final updated = current.copyWith(currentWorldId: worldId);
+    await _repo.saveProfile(updated);
+    state = AsyncValue.data(updated);
+  }
 }
+
+final progressStatsProvider = Provider(
+  (ref) => ProgressStatsService(
+    ref.watch(progressRepoProvider),
+    ref.watch(dictionaryRepoProvider),
+  ),
+);
+
+final languageMasteryProvider = FutureProvider<int>((ref) async {
+  return ref.watch(progressStatsProvider).languageMasteryPercent();
+});
+
+final continueUnitProvider = FutureProvider<LearningUnitEntity?>((ref) async {
+  final units = await ref.watch(learningUnitsProvider.future);
+  return ref.watch(progressStatsProvider).findContinueUnit(units);
+});
 
 final dictionaryProvider = FutureProvider<List<WordEntity>>((ref) async {
   return ref.watch(dictionaryRepoProvider).getAllWords();

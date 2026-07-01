@@ -16,7 +16,7 @@ import '../../features/collections/collections_screen.dart';
 import '../../features/boss/boss_screen.dart';
 import '../../features/stories/stories_list_screen.dart';
 import '../../features/stories/story_reader_screen.dart';
-import '../../features/ai_tutor/ai_tutor_screen.dart';
+import '../../features/progress/progress_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/onboarding',
@@ -98,8 +98,8 @@ final appRouter = GoRouter(
           ),
         ),
         GoRoute(
-          path: 'tutor',
-          builder: (_, __) => const AiTutorScreen(),
+          path: 'progress',
+          builder: (_, __) => const ProgressScreen(),
         ),
       ],
     ),

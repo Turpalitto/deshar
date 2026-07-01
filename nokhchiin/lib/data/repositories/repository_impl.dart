@@ -163,8 +163,20 @@ class UserRepositoryImpl implements UserRepository {
       level: data['level'] as int? ?? 1,
       streakDays: data['streakDays'] as int? ?? 0,
       stars: data['stars'] as int? ?? 0,
+      coins: data['coins'] as int? ?? data['stars'] as int? ?? 0,
       dailyGoalMinutes: data['dailyGoalMinutes'] as int? ?? 10,
+      dailyGoalWords: data['dailyGoalWords'] as int? ?? 5,
       todayMinutes: data['todayMinutes'] as int? ?? 0,
+      wordsLearnedToday: data['wordsLearnedToday'] as int? ?? 0,
+      avatarId: data['avatarId'] as String? ?? 'fox_default',
+      currentWorldId: data['currentWorldId'] as String? ?? 'meadow',
+      unlockedWorlds: (data['unlockedWorlds'] as List?)?.cast<String>() ?? const ['meadow'],
+      achievements: (data['achievements'] as List?)?.cast<String>() ?? const [],
+      lastActiveDate: data['lastActiveDate'] as String?,
+      dailyGiftClaimed: data['dailyGiftClaimed'] as bool? ?? false,
+      weeklyXp: (data['weeklyXp'] as List?)?.cast<int>() ?? const [0, 0, 0, 0, 0, 0, 0],
+      isPremium: data['isPremium'] as bool? ?? false,
+      lessonsCompletedTotal: data['lessonsCompletedTotal'] as int? ?? 0,
     );
   }
 
@@ -177,8 +189,20 @@ class UserRepositoryImpl implements UserRepository {
       'level': profile.level,
       'streakDays': profile.streakDays,
       'stars': profile.stars,
+      'coins': profile.coins,
       'dailyGoalMinutes': profile.dailyGoalMinutes,
+      'dailyGoalWords': profile.dailyGoalWords,
       'todayMinutes': profile.todayMinutes,
+      'wordsLearnedToday': profile.wordsLearnedToday,
+      'avatarId': profile.avatarId,
+      'currentWorldId': profile.currentWorldId,
+      'unlockedWorlds': profile.unlockedWorlds,
+      'achievements': profile.achievements,
+      'lastActiveDate': profile.lastActiveDate,
+      'dailyGiftClaimed': profile.dailyGiftClaimed,
+      'weeklyXp': profile.weeklyXp,
+      'isPremium': profile.isPremium,
+      'lessonsCompletedTotal': profile.lessonsCompletedTotal,
     });
   }
 }
