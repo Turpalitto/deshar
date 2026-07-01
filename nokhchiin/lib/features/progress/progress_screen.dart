@@ -7,10 +7,18 @@ import '../../domain/entities/learning_entities.dart';
 class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
 
+  static const _achievements = {
+    'first_lesson': '🏅 Первый урок',
+    'streak_3': '🔥 Серия 3 дня',
+    'streak_7': '💎 Серия 7 дней',
+    'collector': '📚 Коллекционер',
+  };
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(userProfileProvider).value ?? const UserProfileEntity();
     final mastery = ref.watch(languageMasteryProvider);
+    final weekXp = profile.weeklyXp.fold<int>(0, (a, b) => a + b);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Прогресс')),
@@ -23,9 +31,9 @@ class ProgressScreen extends ConsumerWidget {
               children: [
                 Text('Сегодня', style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 12),
-                _Row('Слов изучено', '${profile.wordsLearnedToday}'),
+                _Row('Слов', '${profile.wordsLearnedToday} / ${profile.dailyGoalWords}'),
                 _Row('XP', '${profile.xp}'),
-                _Row('Монеты', '${profile.coins}'),
+                _Row('Монеты', '🪙 ${profile.coins}'),
               ],
             ),
           ),
@@ -34,12 +42,37 @@ class ProgressScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Всего', style: Theme.of(context).textTheme.headlineMedium),
+                Text('Неделя · Месяц', style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 12),
-                _Row('Уровень', '${profile.level}'),
+                _Row('XP за неделю', '$weekXp'),
+                _Row('Уроков всего', '${profile.lessonsCompletedTotal}'),
+                _Row('Язык', '${mastery.valueOrNull ?? 0}%'),
                 _Row('Серия', '${profile.streakDays} дн.'),
-                _Row('Язык освоен', '${mastery.valueOrNull ?? 0}%'),
-                _Row('Уроков', '${profile.lessonsCompletedTotal}'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          GlassCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Достижения', style: Theme.of(context).textTheme.headlineMedium),
+                const SizedBox(height: 12),
+                ..._achievements.entries.map((e) {
+                  final unlocked = profile.achievements.contains(e.key);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Text(unlocked ? e.value : '🔒 ${e.value.split(' ').skip(1).join(' ')}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: unlocked ? null : Colors.grey,
+                            )),
+                      ],
+                    ),
+                  );
+                }),
               ],
             ),
           ),
