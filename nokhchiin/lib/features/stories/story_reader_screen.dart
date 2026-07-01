@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/content_providers.dart';
 import '../../core/providers/providers.dart';
-import '../../core/services/audio_service.dart';
 import '../../core/widgets/word_illustration.dart';
-
-final _audioProvider = Provider((_) => AudioService());
 
 class StoryReaderScreen extends ConsumerStatefulWidget {
   const StoryReaderScreen({super.key, required this.storyId});
@@ -107,7 +104,6 @@ class _StoryReaderScreenState extends ConsumerState<StoryReaderScreen> {
                   speaker: d['speaker'] as String? ?? '',
                   chechen: d['chechen'] as String? ?? '',
                   russian: d['russian'] as String? ?? '',
-                  onSpeak: () => ref.read(_audioProvider).speakChechen(d['chechen'] as String? ?? ''),
                 )),
             const SizedBox(height: 24),
             Row(
@@ -175,11 +171,9 @@ class _DialogueBubble extends StatelessWidget {
     required this.speaker,
     required this.chechen,
     required this.russian,
-    required this.onSpeak,
   });
 
   final String speaker, chechen, russian;
-  final VoidCallback onSpeak;
 
   @override
   Widget build(BuildContext context) {
@@ -187,21 +181,14 @@ class _DialogueBubble extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       child: Padding(
         padding: const EdgeInsets.all(14),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (speaker.isNotEmpty)
-                    Text(speaker, style: Theme.of(context).textTheme.labelLarge),
-                  Text(chechen, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-                  Text(russian, style: Theme.of(context).textTheme.bodyMedium),
-                ],
-              ),
-            ),
-            IconButton(icon: const Icon(Icons.volume_up_rounded), onPressed: onSpeak),
+            if (speaker.isNotEmpty)
+              Text(speaker, style: Theme.of(context).textTheme.labelLarge),
+            Text(chechen, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
+            const SizedBox(height: 4),
+            Text(russian, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700)),
           ],
         ),
       ),
