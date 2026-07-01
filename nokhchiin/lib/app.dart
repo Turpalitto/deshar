@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nokhchiin/l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
-import 'core/theme/app_theme.dart';
+import 'core/design/theme/nokhchiin_theme.dart';
+import 'core/design/theme/theme_provider.dart';
 import 'core/providers/providers.dart';
 import 'domain/entities/enums.dart';
 
@@ -11,13 +14,24 @@ class NokhchiinApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(userProfileProvider).value;
+    final themeMode = ref.watch(themeBrightnessProvider);
+    final mode = profile?.mode ?? AppMode.kids;
+    final age = profile?.ageGroup ?? KidsAgeGroup.age6to9;
+
     return MaterialApp.router(
       title: 'Нохчийн',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme(
-        mode: profile?.mode ?? AppMode.kids,
-        age: profile?.ageGroup ?? KidsAgeGroup.age6to9,
-      ),
+      theme: NokhchiinTheme.light(mode: mode, age: age),
+      darkTheme: NokhchiinTheme.dark(mode: mode, age: age),
+      themeMode: themeMode,
+      locale: const Locale('ru'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: appRouter,
     );
   }

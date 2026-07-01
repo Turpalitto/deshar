@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:nokhchiin/data/datasources/local_storage_datasource.dart';
 import 'package:nokhchiin/features/onboarding/onboarding_screen.dart';
+import 'helpers/test_app.dart';
 
 void main() {
   final hiveDir = Directory('test/.hive');
@@ -29,11 +28,7 @@ void main() {
   });
 
   testWidgets('onboarding shows title and learning modes', (tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: OnboardingScreen()),
-      ),
-    );
+    await tester.pumpWidget(testApp(const OnboardingScreen()));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 

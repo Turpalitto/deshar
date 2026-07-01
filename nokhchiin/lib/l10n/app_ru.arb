@@ -1,0 +1,53 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Нохчийн",
+  "appTagline": "Лучший путь к чеченскому языку",
+  "kidsModeTitle": "Детский режим",
+  "kidsModeSubtitle": "Игра, истории, большие кнопки",
+  "adultModeTitle": "Взрослый режим",
+  "adultModeSubtitle": "Карточки, грамматика, статистика",
+  "agePickerTitle": "Сколько лет?",
+  "age3to6": "3–6 лет",
+  "age6to9": "6–9 лет",
+  "age9to12": "9–12 лет",
+  "dictionaryTitle": "Словарь",
+  "dictionarySearchHint": "Поиск: чеченский или русский",
+  "dictionaryMeta": "{count} слов · Мациев + Алироев + учебник",
+  "@dictionaryMeta": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "verifiedLabel": "✓ проверено",
+  "quizTitle": "Викторина · ★ {score}",
+  "@quizTitle": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "notEnoughWords": "Недостаточно слов",
+  "quizTapHint": "Выберите правильный перевод",
+  "paywallTitle": "Нохчийн Premium",
+  "paywallHeadline": "Весь путь к чеченскому",
+  "paywallSubtitle": "Безлимитные уроки, повторения и статистика для родителей",
+  "paywallTrialTitle": "{days} дней бесплатно",
+  "@paywallTrialTitle": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "paywallTrialSubtitle": "затем подписка · отмена в любой момент",
+  "paywallStartTrial": "Начать пробный период",
+  "paywallBuyPremium": "Купить Premium",
+  "paywallRestore": "Восстановить покупки",
+  "paywallLegal": "Продолжая, вы соглашаетесь с Условиями и Политикой конфиденциальности",
+  "compareFree": "Free",
+  "comparePremium": "Premium",
+  "compareRowUnits": "Первые 3 юнита",
+  "compareRowPath": "Весь путь обучения",
+  "compareRowSrs": "SRS без лимита",
+  "compareRowParent": "Статистика родителя",
+  "compareRowOffline": "Офлайн-паки",
+  "loading": "Загрузка…",
+  "retry": "Повторить"
+}

@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nokhchiin/core/l10n/l10n_extensions.dart';
+import '../../core/config/feature_flags.dart';
+import '../../core/design/tokens/app_spacing.dart';
+import '../../core/design/tokens/app_typography.dart';
+import '../../core/design/widgets/app_card.dart';
+import '../../core/design/widgets/app_scaffold.dart';
+import '../../core/design/widgets/error_state.dart';
+import '../../core/design/widgets/loading_state.dart';
 import '../../core/providers/providers.dart';
 import '../../core/services/audio_service.dart';
 import '../../domain/entities/word_entity.dart';
@@ -25,87 +33,128 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final dict = ref.watch(dictionaryProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Словарь'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(64),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+
+    return AppScaffold(
+      title: l10n.dictionaryTitle,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.md),
             child: TextField(
               controller: _controller,
-              decoration: const InputDecoration(
-                hintText: 'Поиск: чеченский или русский',
-                prefixIcon: Icon(Icons.search_rounded),
+              decoration: InputDecoration(
+                hintText: l10n.dictionarySearchHint,
+                prefixIcon: const Icon(Icons.search_rounded),
               ),
               onChanged: (v) => setState(() => _query = v),
             ),
           ),
-        ),
-      ),
-      body: dict.when(
-        data: (words) {
-          final filtered = _query.isEmpty
-              ? words.take(100).toList()
-              : words
-                  .where((w) =>
-                      w.chechen.toLowerCase().contains(_query.toLowerCase()) ||
-                      w.russian.toLowerCase().contains(_query.toLowerCase()))
-                  .take(80)
-                  .toList();
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: filtered.length + 1,
-            itemBuilder: (context, i) {
-              if (i == 0) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    '${words.length} слов · Мациев + Алироев + учебник',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+          Expanded(
+            child: dict.when(
+              data: (words) {
+                final filtered = _query.isEmpty
+                    ? words.take(100).toList()
+                    : words
+                        .where((w) =>
+                            w.chechen.toLowerCase().contains(_query.toLowerCase()) ||
+                            w.russian.toLowerCase().contains(_query.toLowerCase()))
+                        .take(80)
+                        .toList();
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  itemCount: filtered.length + 1,
+                  itemBuilder: (context, i) {
+                    if (i == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                        child: Text(
+                          l10n.dictionaryMeta(words.length),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      );
+                    }
+                    return _WordTile(
+                      word: filtered[i - 1],
+                      audioEnabled: FeatureFlags.audioEnabled,
+                      verifiedLabel: l10n.verifiedLabel,
+                      onSpeak: FeatureFlags.audioEnabled
+                          ? () => ref.read(_audioProvider).speakChechen(filtered[i - 1].chechen)
+                          : () {},
+                      onFavorite: () =>
+                          ref.read(progressRepoProvider).toggleFavorite(filtered[i - 1].id),
+                    );
+                  },
                 );
-              }
-              return _WordTile(
-                word: filtered[i - 1],
-                onSpeak: () => ref.read(_audioProvider).speakChechen(filtered[i - 1].chechen),
-                onFavorite: () => ref.read(progressRepoProvider).toggleFavorite(filtered[i - 1].id),
-              );
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+              },
+              loading: () => LoadingState(message: l10n.loading),
+              error: (e, _) => ErrorState(message: '$e', onRetry: () => ref.invalidate(dictionaryProvider)),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _WordTile extends StatelessWidget {
-  const _WordTile({required this.word, required this.onSpeak, required this.onFavorite});
+  const _WordTile({
+    required this.word,
+    required this.onSpeak,
+    required this.onFavorite,
+    required this.verifiedLabel,
+    this.audioEnabled = false,
+  });
+
   final WordEntity word;
   final VoidCallback onSpeak;
   final VoidCallback onFavorite;
+  final String verifiedLabel;
+  final bool audioEnabled;
 
   @override
   Widget build(BuildContext context) {
     final verified = word.tags.contains('verified') || word.sources.contains('curated');
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Text(word.emoji ?? '📖', style: const TextStyle(fontSize: 28)),
-        title: Text(word.chechen, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-        subtitle: Column(
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: AppCard(
+        onTap: audioEnabled ? onSpeak : null,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(word.russian),
-            if (verified)
-              const Text('✓ проверено', style: TextStyle(color: Color(0xFF0D904F), fontSize: 11)),
+            Text(word.emoji ?? '📖', style: const TextStyle(fontSize: 32)),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(word.chechen, style: AppTypography.chechenWord(context)),
+                  Text(word.russian, style: Theme.of(context).textTheme.bodyLarge),
+                  if (word.pronunciation != null && word.pronunciation!.isNotEmpty)
+                    Text(word.pronunciation!, style: AppTypography.pronunciation(context)),
+                  if (verified)
+                    Text(
+                      verifiedLabel,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.favorite_border_rounded),
+              onPressed: onFavorite,
+            ),
+            if (audioEnabled)
+              IconButton(icon: const Icon(Icons.volume_up_rounded), onPressed: onSpeak),
           ],
         ),
-        trailing: IconButton(icon: const Icon(Icons.volume_up_rounded), onPressed: onSpeak),
-        onTap: onSpeak,
       ),
     );
   }

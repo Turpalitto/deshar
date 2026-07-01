@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import '../config/feature_flags.dart';
 import '../../domain/entities/enums.dart';
 import '../../domain/repositories/repositories.dart';
 
@@ -51,6 +52,7 @@ class AudioService implements AudioRepository {
   @override
   Future<void> speakChechen(String text,
       {VoiceProfile profile = VoiceProfile.childNormal}) async {
+    if (!FeatureFlags.audioEnabled) return;
     final path = _audioPath(text, chechen: true);
     if (path != null && await _playAsset(path)) return;
     await _applyProfile(profile, slow: profile == VoiceProfile.childSlow ||
@@ -62,6 +64,7 @@ class AudioService implements AudioRepository {
   @override
   Future<void> speakRussian(String text,
       {VoiceProfile profile = VoiceProfile.adultNormal}) async {
+    if (!FeatureFlags.audioEnabled) return;
     final path = _audioPath(text, chechen: false);
     if (path != null && await _playAsset(path)) return;
     await _applyProfile(profile, slow: profile == VoiceProfile.childSlow ||

@@ -8,6 +8,10 @@ import '../../domain/entities/learning_entities.dart';
 import '../../domain/entities/word_entity.dart';
 import '../../domain/entities/enums.dart';
 import '../../core/services/progress_stats_service.dart';
+import '../../core/services/billing_service.dart';
+import '../../domain/usecases/access_usecases.dart';
+import '../../domain/entities/subscription_entity.dart';
+import '../../domain/repositories/billing_repository.dart';
 
 // --- Data sources ---
 final assetDictSourceProvider = Provider((_) => AssetDictionaryDataSource());
@@ -193,6 +197,13 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfileEntity>> {
     await _repo.saveProfile(updated);
     state = AsyncValue.data(updated);
   }
+
+  Future<void> setPremium(bool value) async {
+    final current = state.value ?? const UserProfileEntity();
+    final updated = current.copyWith(isPremium: value);
+    await _repo.saveProfile(updated);
+    state = AsyncValue.data(updated);
+  }
 }
 
 final progressStatsProvider = Provider(
@@ -219,16 +230,18 @@ final learningUnitsProvider =
     FutureProvider<List<LearningUnitEntity>>((ref) async {
   final units = await ref.watch(learningPathRepoProvider).getUnits();
   final mastery = ref.watch(unitMasteryUseCaseProvider);
+  final canAccess = ref.watch(canAccessUnitUseCaseProvider);
 
   final result = <LearningUnitEntity>[];
   LearningUnitEntity? prev;
   for (final u in units) {
     final pct = await mastery(u.id);
-    var unlocked = u.order == 1;
-    if (!unlocked && prev != null) {
+    var masteryUnlocked = u.order == 1;
+    if (!masteryUnlocked && prev != null) {
       final prevPct = await mastery(prev.id);
-      unlocked = prevPct >= u.requiredMastery;
+      masteryUnlocked = prevPct >= u.requiredMastery;
     }
+    final unlocked = await canAccess(u, masteryUnlocked: masteryUnlocked);
     result.add(LearningUnitEntity(
       id: u.id,
       order: u.order,
@@ -248,3 +261,37 @@ final learningUnitsProvider =
 final dueWordsProvider = FutureProvider<List<WordEntity>>((ref) async {
   return ref.watch(getDueWordsUseCaseProvider)();
 });
+
+// --- Billing ---
+final billingServiceProvider = Provider<BillingRepository>((ref) {
+  return BillingService(
+    userRepo: ref.watch(userRepoProvider),
+    onPremiumChanged: (v) => ref.read(userProfileProvider.notifier).setPremium(v),
+  );
+});
+
+final subscriptionProvider = FutureProvider<SubscriptionEntity>((ref) async {
+  return ref.watch(billingServiceProvider).getSubscription();
+});
+
+final canAccessUnitUseCaseProvider = Provider(
+  (ref) => CanAccessUnitUseCase(
+    ref.watch(billingServiceProvider),
+    ref.watch(userRepoProvider),
+  ),
+);
+
+final canAccessFeatureUseCaseProvider = Provider(
+  (ref) => CanAccessFeatureUseCase(
+    ref.watch(billingServiceProvider),
+    ref.watch(userRepoProvider),
+  ),
+);
+
+final canStartReviewUseCaseProvider = Provider(
+  (ref) => CanStartReviewUseCase(
+    ref.watch(billingServiceProvider),
+    ref.watch(userRepoProvider),
+    ref.watch(progressRepoProvider),
+  ),
+);

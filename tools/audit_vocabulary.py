@@ -12,7 +12,7 @@ DICT = ROOT / "dictionary.json"
 CURATED = ROOT / "curated_vocabulary.json"
 CORRECTIONS = ROOT / "vocabulary_corrections.json"
 ALIROEV = ROOT / "aliroev_ocr_entries.json"
-REPORT = ROOT / "vocabulary_audit_report.json"
+REPORT = ROOT / "tools" / "output" / "vocabulary_audit_report.json"
 
 
 def norm(s: str) -> str:
@@ -80,6 +80,7 @@ def main():
             f"Add {len(missing_in_dict)} curated words missing from merged dictionary"
         )
 
+    REPORT.parent.mkdir(parents=True, exist_ok=True)
     with open(REPORT, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 

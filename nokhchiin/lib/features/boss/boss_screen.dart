@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/providers/providers.dart';
+import '../../core/config/feature_flags.dart';
 import '../../core/services/audio_service.dart';
 import '../../core/providers/content_providers.dart';
 import '../../core/widgets/word_illustration.dart';
@@ -114,10 +115,23 @@ class _BossScreenState extends ConsumerState<BossScreen> {
             WordIllustration(category: widget.unitId, emoji: target.emoji, size: 140),
             const SizedBox(height: 16),
             Text(target.chechen, style: Theme.of(context).textTheme.displayLarge, textAlign: TextAlign.center),
-            IconButton(
-              icon: const Icon(Icons.volume_up_rounded, size: 36),
-              onPressed: () => ref.read(_audioProvider).speakChechen(target.chechen),
-            ),
+            if (target.pronunciation != null && target.pronunciation!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  target.pronunciation!,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            if (FeatureFlags.audioEnabled)
+              IconButton(
+                icon: const Icon(Icons.volume_up_rounded, size: 36),
+                onPressed: () => ref.read(_audioProvider).speakChechen(target.chechen),
+              ),
             const Spacer(),
             ...options.map((o) => Padding(
                   padding: const EdgeInsets.only(bottom: 10),

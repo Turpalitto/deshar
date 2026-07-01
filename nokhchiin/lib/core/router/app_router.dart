@@ -18,6 +18,8 @@ import '../../features/boss/boss_screen.dart';
 import '../../features/stories/stories_list_screen.dart';
 import '../../features/stories/story_reader_screen.dart';
 import '../../features/progress/progress_screen.dart';
+import '../../features/paywall/paywall_screen.dart';
+import '../../features/games/typing_exercise_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/onboarding',
@@ -107,6 +109,18 @@ final appRouter = GoRouter(
         GoRoute(
           path: 'progress',
           builder: (_, __) => const ProgressScreen(),
+        ),
+        GoRoute(
+          path: 'paywall',
+          builder: (_, state) => PaywallScreen(
+            returnPath: state.uri.queryParameters['return'],
+          ),
+        ),
+        GoRoute(
+          path: 'typing/:unitId',
+          builder: (_, state) => TypingExerciseScreen(
+            unitId: state.pathParameters['unitId']!,
+          ),
         ),
       ],
     ),

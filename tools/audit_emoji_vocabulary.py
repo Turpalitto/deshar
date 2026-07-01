@@ -132,7 +132,8 @@ def main():
         "duplicate_chechen": duplicates,
         "auto_emoji_fixes": fixes,
     }
-    out = ROOT / "vocabulary_emoji_audit.json"
+    out = ROOT / "tools" / "output" / "vocabulary_emoji_audit.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 

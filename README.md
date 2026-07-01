@@ -12,16 +12,19 @@ Production-ready архитектура уровня Khan Academy + Duolingo:
 - **Путь обучения** — 11 юнитов с блокировкой до освоения
 - **7800+ слов** — Мациев + Алироев (curated) + учебник
 - **Мини-игры** — карточки, викторина, пары
-- **Словарь** — поиск, озвучка, избранное
+- **Словарь** — поиск, транскрипция, избранное (озвучка — за фиче-флагом)
 - **Кабинет родителя** — статистика
 - **Офлайн** — Hive + assets
 
 ### Инструменты (`tools/`)
-- `build_dictionary.py` — слияние PDF Мациева + curated + Алироев
-- `curated_vocabulary.json` — 108 проверенных слов (полные формы)
+- `tools/build_dictionary.py` — слияние PDF Мациева + curated + Алироев
+- `tools/expand_curated.py` — расширение curated до 1000+ из dictionary.json
+- `tools/analyze_dict.py`, `tools/audit_*.py` — аудит словаря
+- `tools/output/` — отчёты и промежуточные файлы
+- `curated_vocabulary.json` — 1050+ проверенных слов
 
-### Legacy Web (`index.html`)
-Прототип в корне — заменён Flutter-приложением.
+### Legacy Web (`legacy/`)
+Устаревший HTML/JS прототип — заменён Flutter-приложением.
 
 ## Запуск
 
@@ -35,8 +38,8 @@ flutter run -d chrome
 ## Обновление словаря из PDF
 
 ```bash
-# PDF Мациева — в корень репозитория: Maciev_dictionary.pdf
-python build_dictionary.py --copy-assets
+# Скачайте Maciev_dictionary.pdf в корень репозитория (не в git)
+python tools/build_dictionary.py --copy-assets
 ```
 
 Флаг `--copy-assets` копирует `dictionary.json` и `lessons.json` в `nokhchiin/assets/data/`.
