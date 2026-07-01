@@ -97,6 +97,10 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfileEntity>> {
       weekly.add(0);
     }
 
+    var achievements = List<String>.from(p.achievements);
+    if (streak >= 3 && !achievements.contains('streak_3')) achievements.add('streak_3');
+    if (streak >= 7 && !achievements.contains('streak_7')) achievements.add('streak_7');
+
     return p.copyWith(
       lastActiveDate: today,
       streakDays: streak,
@@ -104,6 +108,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfileEntity>> {
       todayMinutes: 0,
       dailyGiftClaimed: false,
       weeklyXp: weekly,
+      achievements: achievements,
     );
   }
 
