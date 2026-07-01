@@ -1,40 +1,76 @@
 {
   "worlds": [
     {
+      "id": "home_world",
+      "titleRu": "Дом",
+      "titleCe": "ЦӀий",
+      "emoji": "🏡",
+      "gradient": ["#E8EAF6", "#C5CAE9"],
+      "unlockStars": 0,
+      "units": ["home", "greetings"]
+    },
+    {
       "id": "meadow",
-      "titleRu": "Луговая долина",
-      "titleCe": "Хьунан Ӏаппаза",
-      "emoji": "🌿",
+      "titleRu": "Животные",
+      "titleCe": "Дийнаташ",
+      "emoji": "🐻",
       "gradient": ["#A8E6CF", "#DCEDC1"],
       "unlockStars": 0,
-      "units": ["animals", "nature"]
+      "units": ["animals"]
+    },
+    {
+      "id": "food_world",
+      "titleRu": "Еда",
+      "titleCe": "Кхача",
+      "emoji": "🍎",
+      "gradient": ["#FFE0B2", "#FFCC80"],
+      "unlockStars": 20,
+      "units": ["food"]
     },
     {
       "id": "village",
-      "titleRu": "Горное село",
-      "titleCe": "Ламан Ӏаппаза",
-      "emoji": "🏔️",
-      "gradient": ["#B3E5FC", "#E1F5FE"],
-      "unlockStars": 50,
-      "units": ["home", "family", "food"]
+      "titleRu": "Семья",
+      "titleCe": "Доьзал",
+      "emoji": "👨‍👩‍👧",
+      "gradient": ["#F8BBD9", "#F48FB1"],
+      "unlockStars": 40,
+      "units": ["family"]
     },
     {
       "id": "school_world",
-      "titleRu": "Школа знаний",
-      "titleCe": "Дешаран Ӏалам",
-      "emoji": "📚",
+      "titleRu": "Школа",
+      "titleCe": "Дешар",
+      "emoji": "🏫",
       "gradient": ["#E1BEE7", "#F3E5F5"],
-      "unlockStars": 120,
-      "units": ["school", "verbs", "phrases"]
+      "unlockStars": 80,
+      "units": ["verbs", "home"]
+    },
+    {
+      "id": "nature_world",
+      "titleRu": "Природа",
+      "titleCe": "Ӏалам",
+      "emoji": "🌳",
+      "gradient": ["#B3E5FC", "#81D4FA"],
+      "unlockStars": 100,
+      "units": ["nature", "colors"]
+    },
+    {
+      "id": "sport_world",
+      "titleRu": "Спорт",
+      "titleCe": "Спорт",
+      "emoji": "⚽",
+      "gradient": ["#C8E6C9", "#A5D6A7"],
+      "unlockStars": 150,
+      "units": ["verbs"]
     },
     {
       "id": "legend",
-      "titleRu": "Легенды Нохчийчоь",
+      "titleRu": "Легенды",
       "titleCe": "Легендаш",
-      "emoji": "✨",
+      "emoji": "🌙",
       "gradient": ["#FFE0B2", "#FFF3E0"],
-      "unlockStars": 250,
-      "units": ["dialogues", "stories"]
+      "unlockStars": 200,
+      "units": ["greetings", "family"]
     }
   ]
 }
