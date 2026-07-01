@@ -35,10 +35,11 @@ flutter run -d chrome
 ## Обновление словаря из PDF
 
 ```bash
-python build_dictionary.py
-Copy-Item dictionary.json nokhchiin/assets/data/
-Copy-Item lessons_data.json nokhchiin/assets/data/lessons.json
+# PDF Мациева — в корень репозитория: Maciev_dictionary.pdf
+python build_dictionary.py --copy-assets
 ```
+
+Флаг `--copy-assets` копирует `dictionary.json` и `lessons.json` в `nokhchiin/assets/data/`.
 
 ## Источники
 - [Мациев А.Г.](https://ps95.ru/wp-content/uploads/2018/07/Maciev_A.G_Chechensko-russkiy_slovar.pdf)

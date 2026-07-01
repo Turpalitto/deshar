@@ -3,10 +3,12 @@
 import re
 import json
 import fitz
+from pathlib import Path
 
-PDF_PATH = r"C:\АББА\Maciev_dictionary.pdf"
-OUT_JSON = r"C:\АББА\dictionary.json"
-OUT_LESSONS = r"C:\АББА\lessons_data.json"
+ROOT = Path(__file__).resolve().parent
+PDF_PATH = ROOT / "Maciev_dictionary.pdf"
+OUT_JSON = ROOT / "dictionary.json"
+OUT_LESSONS = ROOT / "lessons_data.json"
 
 SKIP_MARKERS = (
     "понуд.", "потенц.", "прил.", "см. ", "масд.", "прич.", "нареч.",

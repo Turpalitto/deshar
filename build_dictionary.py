@@ -3,10 +3,12 @@
 import re
 import json
 import argparse
+import shutil
 import fitz
 from pathlib import Path
 
-ROOT = Path(r"C:\АББА")
+ROOT = Path(__file__).resolve().parent
+ASSETS_DATA = ROOT / "nokhchiin" / "assets" / "data"
 MACIEV_PDF = ROOT / "Maciev_dictionary.pdf"
 CURATED_JSON = ROOT / "curated_vocabulary.json"
 CORRECTIONS_JSON = ROOT / "vocabulary_corrections.json"
@@ -321,6 +323,11 @@ def build_lessons(curated: dict) -> list[dict]:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--with-aliroev-ocr", action="store_true")
+    parser.add_argument(
+        "--copy-assets",
+        action="store_true",
+        help="Copy dictionary.json and lessons.json into nokhchiin/assets/data/",
+    )
     args = parser.parse_args()
 
     print("Parsing Maciev dictionary...")
@@ -362,11 +369,16 @@ def main():
     with open(OUT_LESSONS, "w", encoding="utf-8") as f:
         json.dump(lessons, f, ensure_ascii=False, indent=2)
 
-  # lessons_data.js
     with open(ROOT / "lessons_data.js", "w", encoding="utf-8") as f:
         f.write("window.MACIEV_LESSONS = ")
         json.dump(lessons, f, ensure_ascii=False)
         f.write(";\n")
+
+    if args.copy_assets:
+        ASSETS_DATA.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(OUT_DICT, ASSETS_DATA / "dictionary.json")
+        shutil.copy2(OUT_LESSONS, ASSETS_DATA / "lessons.json")
+        print(f"Copied outputs to {ASSETS_DATA}")
 
     print(f"Built {len(lessons)} lessons")
     for l in lessons:
