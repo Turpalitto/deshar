@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/loading_state.dart';
-import '../../core/design/widgets/reward_celebration.dart';
-import '../../core/design/widgets/word_exercise_card.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
+import '../../core/design/widgets/reward_celebration.dart'; // intentional-mix: celebration overlay
+import '../../core/design/widgets/word_exercise_card.dart'; // intentional-mix: exercise card layout
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../domain/constants/subscription_limits.dart';
@@ -52,7 +54,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                   padding: const EdgeInsets.all(28),
                   child: Column(
                     children: [
-                      const Text('🔄', style: TextStyle(fontSize: 56)),
+                      AppIconImage(asset: AppIcons.actionReview, size: 56, color: accent),
                       const SizedBox(height: 20),
                       Text(
                         'Сегодня повторить',
@@ -107,7 +109,14 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
         data: (words) {
           if (words.isEmpty) {
             return Center(
-              child: Text('Всё повторено 🎉', style: TextStyle(color: tokens.textSecondary, fontSize: 17)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppIconImage(asset: AppIcons.rewardCelebration, size: 40, color: accent),
+                  const SizedBox(height: 12),
+                  Text('Всё повторено', style: TextStyle(color: tokens.textSecondary, fontSize: 17)),
+                ],
+              ),
             );
           }
 
@@ -117,7 +126,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
               if (!mounted) return;
               await RewardCelebration.show(
                 context,
-                emoji: '🎉',
+                iconAsset: AppIcons.rewardCelebration,
                 title: 'Отлично!',
                 subtitle: 'Правильно: $_correct · +${_correct * 5} XP',
                 onDismiss: () => Navigator.of(context).pop(),

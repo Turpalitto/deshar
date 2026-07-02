@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
 import '../../core/providers/providers.dart';
 import '../../core/widgets/mastery_progress_bar.dart';
 import '../../core/widgets/word_illustration.dart';
@@ -40,8 +42,8 @@ class UnitDetailScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _GameButton(emoji: '👹', title: 'Босс мира', subtitle: 'Кульминация темы', onTap: () => context.push('/boss/$unitId')),
-                  _GameButton(emoji: '🧩', title: 'Найди пару', onTap: () => context.push('/match/$unitId')),
+                  _GameButton(iconAsset: AppIcons.gameBoss, title: 'Босс мира', subtitle: 'Кульминация темы', onTap: () => context.push('/boss/$unitId')),
+                  _GameButton(iconAsset: AppIcons.gamePuzzle, title: 'Найди пару', onTap: () => context.push('/match/$unitId')),
                 ],
               );
             },
@@ -55,8 +57,17 @@ class UnitDetailScreen extends ConsumerWidget {
 }
 
 class _GameButton extends StatelessWidget {
-  const _GameButton({required this.emoji, required this.title, this.subtitle, required this.onTap});
-  final String emoji, title;
+  const _GameButton({
+    this.emoji,
+    this.iconAsset,
+    required this.title,
+    this.subtitle,
+    required this.onTap,
+  }) : assert(emoji != null || iconAsset != null);
+
+  final String? emoji;
+  final String? iconAsset;
+  final String title;
   final String? subtitle;
   final VoidCallback onTap;
 
@@ -66,7 +77,9 @@ class _GameButton extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Card(
         child: ListTile(
-          leading: Text(emoji, style: const TextStyle(fontSize: 28)),
+          leading: iconAsset != null
+              ? AppIconImage(asset: iconAsset!, size: 28)
+              : Text(emoji!, style: const TextStyle(fontSize: 28)),
           title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
           subtitle: subtitle != null ? Text(subtitle!) : null,
           trailing: const Icon(Icons.chevron_right_rounded),

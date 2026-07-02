@@ -4,13 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nokhchiin/core/l10n/l10n_extensions.dart';
 import '../../core/config/feature_flags.dart';
-import '../../core/design/tokens/app_durations.dart';
-import '../../core/design/tokens/app_spacing.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/tokens/app_durations.dart'; // intentional-mix: motion tokens; Figma widgets from design_system
+import '../../core/design/tokens/app_spacing.dart'; // intentional-mix: spacing tokens
 import '../../core/design_system/design_system.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/empty_state.dart';
-import '../../core/design/widgets/loading_state.dart';
-import '../../core/design/widgets/word_exercise_card.dart';
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/empty_state.dart'; // intentional-mix: empty list fallback
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
+import '../../core/design/widgets/word_exercise_card.dart'; // intentional-mix: exercise card layout
 import '../../core/providers/providers.dart';
 import '../../core/services/audio_service.dart';
 import '../../domain/entities/word_entity.dart';
@@ -78,8 +79,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       return AppScaffold(body: LoadingState(message: l10n.loading));
     }
     if (_words.length < 4) {
-      if (widget.embedded) return EmptyState(emoji: '📭', title: l10n.notEnoughWords);
-      return AppScaffold(body: EmptyState(emoji: '📭', title: l10n.notEnoughWords));
+      if (widget.embedded) return EmptyState(iconAsset: AppIcons.stateEmpty, title: l10n.notEnoughWords);
+      return AppScaffold(body: EmptyState(iconAsset: AppIcons.stateEmpty, title: l10n.notEnoughWords));
     }
 
     final questionLimit = widget.maxQuestions ?? _words.length;
@@ -139,7 +140,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: NokhchiinQuizOption(
-                label: '${o.emoji ?? '📖'}  ${o.russian}',
+                label: o.emoji != null ? '${o.emoji}  ${o.russian}' : o.russian,
                 letter: String.fromCharCode(65 + i),
                 selected: _selectedOption == i ? true : null,
                 correct: _selectedOption == i ? isTarget : null,

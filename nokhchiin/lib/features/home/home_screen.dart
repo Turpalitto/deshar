@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/design/tokens/app_spacing.dart';
-import '../../core/design/theme/nokhchiin_theme.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/loading_state.dart';
-import '../../core/design/widgets/reward_celebration.dart';
-import '../../core/design/widgets/week_xp_chart.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
+import '../../core/design/tokens/app_spacing.dart'; // intentional-mix: spacing tokens; Figma widgets from design_system
+import '../../core/design/theme/nokhchiin_theme.dart'; // intentional-mix: legacy theme helpers
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
+import '../../core/design/widgets/reward_celebration.dart'; // intentional-mix: celebration overlay
+import '../../core/design/widgets/week_xp_chart.dart'; // intentional-mix: chart widget not yet in design_system
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../core/providers/content_providers.dart';
@@ -78,7 +80,7 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: NokhchiinGiftTile(
-                      emoji: '🏛️',
+                      iconAsset: AppIcons.cultureHeritage,
                       title: 'Капсула',
                       subtitle: 'Гостеприимство',
                       gradient: const LinearGradient(
@@ -96,7 +98,7 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: NokhchiinGiftTile(
-                      emoji: profile.dailyGiftClaimed ? '✅' : '🎁',
+                      iconAsset: profile.dailyGiftClaimed ? AppIcons.stateSuccess : AppIcons.rewardGift,
                       title: 'Подарок',
                       subtitle: profile.dailyGiftClaimed ? 'Забран' : 'Сегодня',
                       onTap: profile.dailyGiftClaimed
@@ -106,7 +108,7 @@ class HomeScreen extends ConsumerWidget {
                               if (context.mounted) {
                                 await RewardCelebration.show(
                                   context,
-                                  emoji: '🎁',
+                                  iconAsset: AppIcons.rewardGift,
                                   title: 'Подарок дня!',
                                   subtitle: '+15 монет · +20 XP',
                                 );
@@ -117,7 +119,7 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: NokhchiinGiftTile(
-                      emoji: '📖',
+                      iconAsset: AppIcons.navDictionary,
                       title: 'Словарь',
                       subtitle: '7 800 слов',
                       onTap: () => context.push('/dictionary'),
@@ -149,7 +151,7 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () => context.go('/review'),
                   child: Row(
                     children: [
-                      const Text('🔄', style: TextStyle(fontSize: 28)),
+                      AppIconImage(asset: AppIcons.actionReview, size: 28, color: accent),
                       const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Column(
@@ -214,8 +216,10 @@ class HomeScreen extends ConsumerWidget {
                     );
                     final gradient = (w['gradient'] as List).cast<String>();
                     final color = Color(int.parse(gradient.first.replaceFirst('#', '0xFF')));
+                    final worldEmoji = w['emoji'] as String?;
                     return NokhchiinWorldRow(
-                      emoji: w['emoji'] as String? ?? '🌍',
+                      emoji: worldEmoji,
+                      iconAsset: worldEmoji == null ? AppIcons.navWorlds : null,
                       title: w['titleRu'] as String,
                       progressPercent: pct,
                       color: color,
@@ -240,11 +244,11 @@ class HomeScreen extends ConsumerWidget {
             sliver: SliverToBoxAdapter(
               child: Row(
                 children: [
-                  Expanded(child: _QuickLink(emoji: '📚', label: 'Коллекции', onTap: () => context.push('/collections'))),
+                  Expanded(child: _QuickLink(iconAsset: AppIcons.actionCollections, label: 'Коллекции', onTap: () => context.push('/collections'))),
                   const SizedBox(width: 8),
-                  Expanded(child: _QuickLink(emoji: '✨', label: 'Истории', onTap: () => context.push('/stories'))),
+                  Expanded(child: _QuickLink(iconAsset: AppIcons.rewardCelebration, label: 'Истории', onTap: () => context.push('/stories'))),
                   const SizedBox(width: 8),
-                  Expanded(child: _QuickLink(emoji: '⌨️', label: 'Ввод', onTap: () => context.push('/typing/animals'))),
+                  Expanded(child: _QuickLink(iconAsset: AppIcons.actionTyping, label: 'Ввод', onTap: () => context.push('/typing/animals'))),
                 ],
               ),
             ),
@@ -271,7 +275,7 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.iosTokens;
-    final greeting = isKids ? 'Привет, ученик 🦊' : 'Доброе утро';
+    final greeting = isKids ? 'Привет, ученик' : 'Доброе утро';
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,9 +284,17 @@ class _HomeHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                greeting,
-                style: TextStyle(fontSize: 13, color: tokens.textTertiary, fontWeight: FontWeight.w500),
+              Row(
+                children: [
+                  Text(
+                    greeting,
+                    style: TextStyle(fontSize: 13, color: tokens.textTertiary, fontWeight: FontWeight.w500),
+                  ),
+                  if (isKids) ...[
+                    const SizedBox(width: 6),
+                    const AppIconImage(asset: AppIcons.mascotFox, size: 16),
+                  ],
+                ],
               ),
               Text(
                 'Уровень ${profile.level}',
@@ -298,10 +310,15 @@ class _HomeHeader extends StatelessWidget {
         ),
         Row(
           children: [
-            NokhchiinStatPill(emoji: '🔥', value: '${profile.streakDays}', color: accent, background: accentMuted),
+            NokhchiinStatPill(
+              iconAsset: AppIcons.progressStreak,
+              value: '${profile.streakDays}',
+              color: accent,
+              background: accentMuted,
+            ),
             const SizedBox(width: 8),
             NokhchiinStatPill(
-              emoji: '💰',
+              iconAsset: AppIcons.progressCoin,
               value: '${profile.coins}',
               color: DesignTokens.gold,
               background: DesignTokens.goldMuted,
@@ -408,9 +425,15 @@ class _ContinueHero extends StatelessWidget {
 }
 
 class _QuickLink extends StatelessWidget {
-  const _QuickLink({required this.emoji, required this.label, required this.onTap});
+  const _QuickLink({
+    this.emoji,
+    this.iconAsset,
+    required this.label,
+    required this.onTap,
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String label;
   final VoidCallback onTap;
 
@@ -422,7 +445,10 @@ class _QuickLink extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
       child: Column(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 20)),
+          if (iconAsset != null)
+            AppIconImage(asset: iconAsset!, size: 20, color: context.iosTokens.accent)
+          else
+            Text(emoji!, style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 4),
           Text(
             label,

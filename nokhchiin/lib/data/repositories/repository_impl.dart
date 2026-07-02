@@ -5,6 +5,7 @@ import '../../domain/entities/enums.dart';
 import '../../domain/repositories/repositories.dart';
 import '../datasources/asset_dictionary_datasource.dart';
 import '../datasources/local_storage_datasource.dart';
+import '../../core/utils/app_logger.dart';
 
 class DictionaryRepositoryImpl implements DictionaryRepository {
   DictionaryRepositoryImpl(this._assets);
@@ -25,7 +26,8 @@ class DictionaryRepositoryImpl implements DictionaryRepository {
     final all = await _load();
     try {
       return all.firstWhere((w) => w.id == id);
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.warn('Dictionary word not found by id: $id', error: e, stackTrace: st);
       return null;
     }
   }

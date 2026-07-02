@@ -4,6 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nokhchiin/core/l10n/l10n_extensions.dart';
 import '../../core/design/tokens/app_spacing.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
 import '../../core/design/widgets/app_button.dart';
 import '../../core/design/widgets/app_card.dart';
 import '../../core/design/widgets/app_scaffold.dart';
@@ -92,7 +94,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   icon: Icon(Icons.close_rounded, color: tokens.textTertiary),
                 ),
               ),
-              const Text('👑', style: TextStyle(fontSize: 52), textAlign: TextAlign.center)
+              const AppIconImage(asset: AppIcons.rewardCrown, size: 52)
                   .animate()
                   .fadeIn()
                   .scale(begin: const Offset(0.8, 0.8)),
@@ -117,18 +119,18 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 padding: const EdgeInsets.all(18),
                 child: Column(
                   children: [
-                    for (final row in [
-                      ('♾️', l10n.compareRowPath),
-                      ('📴', l10n.compareRowOffline),
-                      ('🔁', l10n.compareRowSrs),
-                      ('🏛️', 'Все культурные капсулы'),
-                      ('📖', 'Словарь 7 800+ слов'),
+                    for (final row in <(String, String)>[
+                      (AppIcons.iconInfinity, l10n.compareRowPath),
+                      (AppIcons.stateOffline, l10n.compareRowOffline),
+                      (AppIcons.actionReview, l10n.compareRowSrs),
+                      (AppIcons.cultureHeritage, 'Все культурные капсулы'),
+                      (AppIcons.navDictionary, 'Словарь 7 800+ слов'),
                     ])
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 9),
                         child: Row(
                           children: [
-                            Text(row.$1, style: const TextStyle(fontSize: 20)),
+                            AppIconImage(asset: row.$1, size: 20, color: tokens.accent),
                             const SizedBox(width: 12),
                             Expanded(child: Text(row.$2)),
                             Icon(Icons.check_rounded, color: tokens.success, size: 18),

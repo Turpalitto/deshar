@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../tokens/app_spacing.dart';
+import '../app_icons.dart';
+import 'app_icon_image.dart';
 import '../../design_system/design_system.dart';
 
 /// Премиальная анимация награды — стиль Figma Reward screen.
@@ -10,7 +12,8 @@ class RewardCelebration {
 
   static Future<void> show(
     BuildContext context, {
-    required String emoji,
+    String? emoji,
+    String? iconAsset,
     required String title,
     required String subtitle,
     String? primaryAction,
@@ -18,6 +21,7 @@ class RewardCelebration {
     String dismissLabel = 'Отлично',
     VoidCallback? onDismiss,
   }) async {
+    assert(emoji != null || iconAsset != null);
     await HapticFeedback.mediumImpact();
     if (!context.mounted) return;
 
@@ -63,14 +67,24 @@ class RewardCelebration {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(emoji, style: const TextStyle(fontSize: 96))
-                          .animate()
-                          .scale(
-                            begin: const Offset(0.5, 0.5),
-                            end: const Offset(1, 1),
-                            duration: 600.ms,
-                            curve: IosMotion.curveBouncy,
-                          ),
+                      if (iconAsset != null)
+                        AppIconImage(asset: iconAsset!, size: 96, color: tokens.accent)
+                            .animate()
+                            .scale(
+                              begin: const Offset(0.5, 0.5),
+                              end: const Offset(1, 1),
+                              duration: 600.ms,
+                              curve: IosMotion.curveBouncy,
+                            )
+                      else
+                        Text(emoji!, style: const TextStyle(fontSize: 96))
+                            .animate()
+                            .scale(
+                              begin: const Offset(0.5, 0.5),
+                              end: const Offset(1, 1),
+                              duration: 600.ms,
+                              curve: IosMotion.curveBouncy,
+                            ),
                       const SizedBox(height: 12),
                       Text(
                         title,

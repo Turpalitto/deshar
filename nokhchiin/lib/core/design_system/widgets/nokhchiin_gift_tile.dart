@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../design/app_icons.dart';
+import '../../design/widgets/app_icon_image.dart';
 import '../design_system.dart';
 
 /// Плитка «Капсула / Подарок / Словарь» на главной (Figma Make).
 class NokhchiinGiftTile extends StatelessWidget {
   const NokhchiinGiftTile({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.title,
     required this.subtitle,
     this.onTap,
     this.gradient,
     this.lightText = false,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String title;
   final String subtitle;
   final VoidCallback? onTap;
@@ -40,7 +44,14 @@ class NokhchiinGiftTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 22)),
+              if (iconAsset != null)
+                AppIconImage(
+                  asset: iconAsset!,
+                  size: 22,
+                  color: lightText ? Colors.white : tokens.accent,
+                )
+              else
+                Text(emoji!, style: const TextStyle(fontSize: 22)),
               const SizedBox(height: 6),
               Text(
                 title,

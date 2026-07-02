@@ -14,6 +14,7 @@ import '../../domain/usecases/access_usecases.dart';
 import '../../domain/constants/subscription_limits.dart';
 import '../../domain/entities/subscription_entity.dart';
 import '../../domain/repositories/billing_repository.dart';
+import '../../domain/services/daily_sync_calculator.dart';
 
 // --- Data sources ---
 final assetDictSourceProvider = Provider((_) => AssetDictionaryDataSource());
@@ -71,53 +72,16 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfileEntity>> {
   }
 
   final UserRepository _repo;
+  static const _dailySync = DailySyncCalculator();
 
   Future<void> _load() async {
     var profile = await _repo.getProfile();
-    profile = _syncDaily(profile);
+    profile = _dailySync.sync(profile, DateTime.now());
     await _repo.saveProfile(profile);
     state = AsyncValue.data(profile);
   }
 
-  String _todayKey() {
-    final n = DateTime.now();
-    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')}';
-  }
-
-  UserProfileEntity _syncDaily(UserProfileEntity p) {
-    final today = _todayKey();
-    if (p.lastActiveDate == today) return p;
-
-    final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    final yKey =
-        '${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}';
-    final streak = p.lastActiveDate == yKey ? p.streakDays + 1 : 1;
-
-    final weekly = List<int>.from(p.weeklyXp);
-    if (weekly.length != 7) {
-      weekly
-        ..clear()
-        ..addAll(List.filled(7, 0));
-    } else {
-      weekly.removeAt(0);
-      weekly.add(0);
-    }
-
-    var achievements = List<String>.from(p.achievements);
-    if (streak >= 3 && !achievements.contains('streak_3')) achievements.add('streak_3');
-    if (streak >= 7 && !achievements.contains('streak_7')) achievements.add('streak_7');
-
-    return p.copyWith(
-      lastActiveDate: today,
-      streakDays: streak,
-      wordsLearnedToday: 0,
-      todayMinutes: 0,
-      dailyGiftClaimed: false,
-      reviewsDoneToday: 0,
-      weeklyXp: weekly,
-      achievements: achievements,
-    );
-  }
+  String _todayKey() => DailySyncCalculator.dateKey(DateTime.now());
 
   Future<void> setMode(AppMode mode) async {
     final current = state.value ?? const UserProfileEntity();

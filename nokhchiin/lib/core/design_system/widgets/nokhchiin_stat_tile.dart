@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
+import '../../design/widgets/app_icon_image.dart';
 import '../design_system.dart';
 
 /// Статистическая плитка профиля (Figma Make).
 class NokhchiinStatTile extends StatelessWidget {
   const NokhchiinStatTile({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.value,
     required this.label,
-  });
+    this.iconColor,
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String value;
   final String label;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.iosTokens;
+    final color = iconColor ?? tokens.accent;
 
     return NokhchiinSurfaceCard(
       radius: 18,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       child: Column(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 22)),
+          if (iconAsset != null)
+            AppIconImage(asset: iconAsset!, size: 22, color: color)
+          else
+            Text(emoji!, style: const TextStyle(fontSize: 22)),
           const SizedBox(height: 5),
           Text(
             value,
@@ -52,14 +61,16 @@ class NokhchiinStatTile extends StatelessWidget {
 class NokhchiinStatPill extends StatelessWidget {
   const NokhchiinStatPill({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.value,
     required this.color,
     required this.background,
     this.onTap,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String value;
   final Color color;
   final Color background;
@@ -73,7 +84,10 @@ class NokhchiinStatPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 15)),
+          if (iconAsset != null)
+            AppIconImage(asset: iconAsset!, size: 15, color: color)
+          else
+            Text(emoji!, style: const TextStyle(fontSize: 15)),
           const SizedBox(width: 5),
           Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: color)),
         ],

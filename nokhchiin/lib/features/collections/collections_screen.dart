@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
 import '../../core/design/tokens/app_spacing.dart';
 import '../../core/design/widgets/app_card.dart';
 import '../../core/design/widgets/app_scaffold.dart';
 import '../../core/design/widgets/loading_state.dart';
 import '../../core/widgets/mastery_progress_bar.dart';
+import '../../core/design_system/design_system.dart';
 import '../../core/providers/content_providers.dart';
 import '../../core/providers/providers.dart';
 import '../../domain/entities/enums.dart';
@@ -56,7 +59,12 @@ class CollectionsScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          Text(pct >= 100 ? '✨' : (legendary ? '👑' : '📗'), style: const TextStyle(fontSize: 24)),
+                          if (pct >= 100)
+                            AppIconImage(asset: AppIcons.rewardCelebration, size: 24, color: DesignTokens.gold)
+                          else if (legendary)
+                            const AppIconImage(asset: AppIcons.rewardCrown, size: 24)
+                          else
+                            Text(col['icon'] as String? ?? '📗', style: const TextStyle(fontSize: 24)),
                         ],
                       ),
                     ),

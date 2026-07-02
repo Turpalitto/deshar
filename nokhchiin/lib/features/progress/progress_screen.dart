@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/loading_state.dart';
-import '../../core/design/widgets/week_xp_chart.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
+import '../../core/design/widgets/week_xp_chart.dart'; // intentional-mix: chart widget not yet in design_system
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../domain/entities/enums.dart';
@@ -13,10 +15,10 @@ class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
 
   static const _achievements = {
-    'first_lesson': '🏅 Первый урок',
-    'streak_3': '🔥 Серия 3 дня',
-    'streak_7': '💎 Серия 7 дней',
-    'collector': '📚 Коллекционер',
+    'first_lesson': ('Первый урок', AppIcons.rewardTrophy),
+    'streak_3': ('Серия 3 дня', AppIcons.progressStreak),
+    'streak_7': ('Серия 7 дней', AppIcons.progressStar),
+    'collector': ('Коллекционер', AppIcons.navDictionary),
   };
 
   @override
@@ -44,11 +46,11 @@ class ProgressScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  NokhchiinStatTile(emoji: '🔥', value: '${profile.streakDays}', label: 'Стрик'),
+                  NokhchiinStatTile(iconAsset: AppIcons.progressStreak, value: '${profile.streakDays}', label: 'Стрик'),
                   const SizedBox(width: 10),
-                  NokhchiinStatTile(emoji: '⭐', value: '${profile.xp}', label: 'XP'),
+                  NokhchiinStatTile(iconAsset: AppIcons.progressStar, value: '${profile.xp}', label: 'XP'),
                   const SizedBox(width: 10),
-                  NokhchiinStatTile(emoji: '📚', value: '$wordsStudied', label: 'Слов'),
+                  NokhchiinStatTile(iconAsset: AppIcons.navDictionary, value: '$wordsStudied', label: 'Слов'),
                 ],
               ),
               const SizedBox(height: 14),
@@ -81,9 +83,19 @@ class ProgressScreen extends ConsumerWidget {
                               color: tokens.textPrimary,
                             ),
                           ),
-                          Text(
-                            '${profile.xp} XP · 🪙 ${profile.coins}',
-                            style: TextStyle(fontSize: 13, color: tokens.textSecondary),
+                          Row(
+                            children: [
+                              Text(
+                                '${profile.xp} XP · ',
+                                style: TextStyle(fontSize: 13, color: tokens.textSecondary),
+                              ),
+                              AppIconImage(asset: AppIcons.progressCoin, size: 14, color: DesignTokens.gold),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${profile.coins}',
+                                style: TextStyle(fontSize: 13, color: tokens.textSecondary),
+                              ),
+                            ],
                           ),
                           Text(
                             'Слов сегодня: ${profile.wordsLearnedToday}/${profile.dailyGoalWords}',
@@ -132,14 +144,26 @@ class ProgressScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
                       ..._achievements.entries.map((e) {
                         final unlocked = profile.achievements.contains(e.key);
+                        final (label, icon) = e.value;
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Text(
-                            unlocked ? e.value : '🔒 ${e.value.split(' ').skip(1).join(' ')}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: unlocked ? tokens.textPrimary : tokens.textTertiary,
-                            ),
+                          child: Row(
+                            children: [
+                              if (unlocked)
+                                AppIconImage(asset: icon, size: 18, color: accent)
+                              else
+                                AppIconImage(asset: AppIcons.stateLocked, size: 18, color: tokens.textTertiary),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  label,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: unlocked ? tokens.textPrimary : tokens.textTertiary,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       }),

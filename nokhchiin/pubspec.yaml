@@ -24,6 +24,7 @@ dependencies:
   flutter_tts: ^4.2.0
   audioplayers: ^6.4.0
   in_app_purchase: ^3.2.1
+  flutter_svg: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -47,3 +48,4 @@ flutter:
     - assets/data/illustrations_manifest.json
     - assets/audio/
     - assets/images/brand/
+    - assets/icons/

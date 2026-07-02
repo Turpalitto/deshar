@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/design/tokens/app_spacing.dart';
-import '../../core/design/widgets/app_scaffold.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
+import '../../core/design/tokens/app_spacing.dart'; // intentional-mix: spacing tokens; Figma widgets from design_system
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../core/widgets/kids_tap_target.dart';
@@ -47,7 +49,9 @@ class ProfileScreen extends ConsumerWidget {
                 height: 68,
                 decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(22)),
                 alignment: Alignment.center,
-                child: Text(isKids ? '🦊' : '👤', style: const TextStyle(fontSize: 32)),
+                child: isKids
+                    ? const AppIconImage(asset: AppIcons.mascotFox, size: 36, color: Colors.white)
+                    : const AppIconImage(asset: AppIcons.navProfile, size: 36, color: Colors.white),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -60,7 +64,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 3),
                     NokhchiinChip(
-                      label: isKids ? 'Детский трек 🦊' : 'Взрослый трек',
+                      label: isKids ? 'Детский трек' : 'Взрослый трек',
                       color: accent,
                       background: accentMuted,
                     ),
@@ -77,7 +81,7 @@ class ProfileScreen extends ConsumerWidget {
                       color: DesignTokens.goldMuted,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('👑', style: TextStyle(fontSize: 18)),
+                    child: const AppIconImage(asset: AppIcons.rewardCrown, size: 18),
                   ),
                 ),
             ],
@@ -85,11 +89,11 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Row(
             children: [
-              Expanded(child: NokhchiinStatTile(emoji: '🔥', value: '${profile.streakDays}', label: 'Стрик')),
+              Expanded(child: NokhchiinStatTile(iconAsset: AppIcons.progressStreak, value: '${profile.streakDays}', label: 'Стрик')),
               const SizedBox(width: 10),
-              Expanded(child: NokhchiinStatTile(emoji: '⭐', value: '${profile.xp}', label: 'XP')),
+              Expanded(child: NokhchiinStatTile(iconAsset: AppIcons.progressStar, value: '${profile.xp}', label: 'XP')),
               const SizedBox(width: 10),
-              Expanded(child: NokhchiinStatTile(emoji: '📚', value: '${profile.lessonsCompletedTotal}', label: 'Уроков')),
+              Expanded(child: NokhchiinStatTile(iconAsset: AppIcons.navDictionary, value: '${profile.lessonsCompletedTotal}', label: 'Уроков')),
             ],
           ),
           const SizedBox(height: 14),
@@ -138,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Text('🔢', style: TextStyle(fontSize: 28)),
+                    const AppIconImage(asset: AppIcons.actionReview, size: 28),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -175,11 +179,25 @@ class ProfileScreen extends ConsumerWidget {
               children: {
                 AppMode.kids: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: isKids ? 12 : 8),
-                  child: const Text('🦊 Дети'),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const AppIconImage(asset: AppIcons.mascotFox, size: 16),
+                      const SizedBox(width: 6),
+                      Text('Дети', style: TextStyle(fontSize: isKids ? 15 : 13)),
+                    ],
+                  ),
                 ),
                 AppMode.adult: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: isKids ? 12 : 8),
-                  child: const Text('📚 Взрослые'),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const AppIconImage(asset: AppIcons.navDictionary, size: 16),
+                      const SizedBox(width: 6),
+                      Text('Взрослые', style: TextStyle(fontSize: isKids ? 15 : 13)),
+                    ],
+                  ),
                 ),
               },
               onValueChanged: (mode) {
@@ -223,7 +241,7 @@ class ProfileScreen extends ConsumerWidget {
           ],
           const SizedBox(height: AppSpacing.md),
           NokhchiinSettingsRow(
-            emoji: '🔄',
+            iconAsset: AppIcons.actionReview,
             label: 'Сменить режим при входе',
             onTap: () => _guarded(
               context,

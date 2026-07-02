@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nokhchiin/core/l10n/l10n_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/config/feature_flags.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/error_state.dart';
-import '../../core/design/widgets/loading_state.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/error_state.dart'; // intentional-mix: error fallback UI
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../core/services/audio_service.dart';
@@ -140,7 +141,8 @@ class _WordRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NokhchiinDictionaryRow(
-      emoji: word.emoji ?? '📖',
+      emoji: word.emoji,
+      iconAsset: word.emoji == null ? AppIcons.navDictionary : null,
       chechen: word.chechen,
       russian: word.russian,
       transcription: word.pronunciation,

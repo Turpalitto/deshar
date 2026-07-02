@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../tokens/app_spacing.dart';
 import '../tokens/nokhchiin_colors.dart';
+import '../app_icons.dart';
+import 'app_icon_image.dart';
 
 class StreakBadge extends StatelessWidget {
   const StreakBadge({super.key, required this.days, this.compact = false});
@@ -11,6 +13,7 @@ class StreakBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hot = days >= 7;
+    final iconSize = compact ? 14.0 : 18.0;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: compact ? AppSpacing.sm : AppSpacing.md,
@@ -27,7 +30,11 @@ class StreakBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(hot ? '💎' : '🔥', style: TextStyle(fontSize: compact ? 14 : 18)),
+          AppIconImage(
+            asset: hot ? AppIcons.progressStar : AppIcons.progressStreak,
+            size: iconSize,
+            color: Colors.white,
+          ),
           const SizedBox(width: AppSpacing.xs),
           Text(
             '$days',

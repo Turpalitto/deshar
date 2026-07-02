@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../design/app_icons.dart';
+import '../../design/widgets/app_icon_image.dart';
 import '../design_system.dart';
 
 /// Строка словаря (Figma Make).
 class NokhchiinDictionaryRow extends StatelessWidget {
   const NokhchiinDictionaryRow({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.chechen,
     required this.russian,
     this.transcription,
@@ -13,9 +16,10 @@ class NokhchiinDictionaryRow extends StatelessWidget {
     this.nounClassMarker,
     this.onTap,
     this.trailing,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String chechen;
   final String russian;
   final String? transcription;
@@ -47,7 +51,9 @@ class NokhchiinDictionaryRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
-              child: Text(emoji, style: const TextStyle(fontSize: 22)),
+              child: iconAsset != null
+                  ? AppIconImage(asset: iconAsset!, size: 22, color: tokens.accent)
+                  : Text(emoji!, style: const TextStyle(fontSize: 22)),
             ),
             const SizedBox(width: 14),
             Expanded(

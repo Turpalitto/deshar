@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:nokhchiin/core/l10n/l10n_extensions.dart';
-import '../../core/design/tokens/app_spacing.dart';
-import '../../core/design/widgets/app_scaffold.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
+import '../../core/design/tokens/app_spacing.dart'; // intentional-mix: spacing tokens; Figma widgets from design_system
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../core/widgets/kids_tap_target.dart';
@@ -72,7 +74,7 @@ class OnboardingScreen extends ConsumerWidget {
             ).animate().fadeIn(delay: 100.ms),
             const SizedBox(height: 36),
             _TrackCard(
-              emoji: '📚',
+              iconAsset: AppIcons.navDictionary,
               title: l10n.adultModeTitle,
               subtitle: l10n.adultModeSubtitle,
               badge: '17+',
@@ -85,7 +87,7 @@ class OnboardingScreen extends ConsumerWidget {
             ).animate().fadeIn(delay: 160.ms).slideX(),
             const SizedBox(height: 12),
             _TrackCard(
-              emoji: '🎮',
+              iconAsset: AppIcons.gamePlay,
               title: l10n.kidsModeTitle,
               subtitle: l10n.kidsModeSubtitle,
               badge: '3–12',
@@ -99,11 +101,11 @@ class OnboardingScreen extends ConsumerWidget {
             const Spacer(),
             Row(
               children: [
-                _FeatureTile(emoji: '🔁', label: 'SM-2 SRS'),
+                _FeatureTile(iconAsset: AppIcons.actionReview, label: 'SM-2 SRS'),
                 const SizedBox(width: 8),
-                _FeatureTile(emoji: '📴', label: 'Офлайн'),
+                _FeatureTile(iconAsset: AppIcons.stateOffline, label: 'Офлайн'),
                 const SizedBox(width: 8),
-                _FeatureTile(emoji: '🏔️', label: 'Культура'),
+                _FeatureTile(iconAsset: AppIcons.cultureMountains, label: 'Культура'),
               ],
             ).animate().fadeIn(delay: 280.ms),
           ],
@@ -134,9 +136,9 @@ class OnboardingScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             Text('Подберём темп и контент', style: TextStyle(color: tokens.textTertiary)),
             const SizedBox(height: AppSpacing.lg),
-            _AgeRow(label: l10n.age3to6, emoji: '🐣', age: KidsAgeGroup.age3to6),
-            _AgeRow(label: l10n.age6to9, emoji: '🌱', age: KidsAgeGroup.age6to9),
-            _AgeRow(label: l10n.age9to12, emoji: '🌿', age: KidsAgeGroup.age9to12),
+            _AgeRow(label: l10n.age3to6, iconAsset: AppIcons.ageHatchling, age: KidsAgeGroup.age3to6),
+            _AgeRow(label: l10n.age6to9, iconAsset: AppIcons.ageSprout, age: KidsAgeGroup.age6to9),
+            _AgeRow(label: l10n.age9to12, iconAsset: AppIcons.ageLeaf, age: KidsAgeGroup.age9to12),
           ],
         ),
       ),
@@ -146,16 +148,18 @@ class OnboardingScreen extends ConsumerWidget {
 
 class _TrackCard extends StatelessWidget {
   const _TrackCard({
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.title,
     required this.subtitle,
     required this.badge,
     required this.accent,
     required this.accentMuted,
     required this.onTap,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String title;
   final String subtitle;
   final String badge;
@@ -187,7 +191,9 @@ class _TrackCard extends StatelessWidget {
                 height: 52,
                 decoration: BoxDecoration(color: accentMuted, borderRadius: BorderRadius.circular(15)),
                 alignment: Alignment.center,
-                child: Text(emoji, style: const TextStyle(fontSize: 26)),
+                child: iconAsset != null
+                    ? AppIconImage(asset: iconAsset!, size: 26, color: accent)
+                    : Text(emoji!, style: const TextStyle(fontSize: 26)),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -216,9 +222,14 @@ class _TrackCard extends StatelessWidget {
 }
 
 class _FeatureTile extends StatelessWidget {
-  const _FeatureTile({required this.emoji, required this.label});
+  const _FeatureTile({
+    this.emoji,
+    this.iconAsset,
+    required this.label,
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String label;
 
   @override
@@ -230,7 +241,10 @@ class _FeatureTile extends StatelessWidget {
         decoration: BoxDecoration(color: tokens.surfaceMuted, borderRadius: BorderRadius.circular(12)),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 20)),
+            if (iconAsset != null)
+              AppIconImage(asset: iconAsset!, size: 20, color: tokens.accent)
+            else
+              Text(emoji!, style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 4),
             Text(
               label,
@@ -245,10 +259,12 @@ class _FeatureTile extends StatelessWidget {
 }
 
 class _AgeRow extends ConsumerWidget {
-  const _AgeRow({required this.label, required this.emoji, required this.age});
+  const _AgeRow({required this.label, this.emoji, this.iconAsset, required this.age})
+      : assert(emoji != null || iconAsset != null);
 
   final String label;
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final KidsAgeGroup age;
 
   @override
@@ -277,7 +293,10 @@ class _AgeRow extends ConsumerWidget {
             padding: const EdgeInsets.all(18),
             child: Row(
               children: [
-                Text(emoji, style: const TextStyle(fontSize: 32)),
+                if (iconAsset != null)
+                  AppIconImage(asset: iconAsset!, size: 32)
+                else
+                  Text(emoji!, style: const TextStyle(fontSize: 32)),
                 const SizedBox(width: 14),
                 Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: tokens.textPrimary)),
               ],

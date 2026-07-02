@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_icon_image.dart';
 import '../../core/providers/content_providers.dart';
 import '../../core/providers/providers.dart';
 import '../../core/widgets/word_illustration.dart';
@@ -51,7 +53,14 @@ class _StoryReaderScreenState extends ConsumerState<StoryReaderScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('История прочитана! 🎉'),
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppIconImage(asset: AppIcons.rewardCelebration, size: 28),
+            SizedBox(width: 10),
+            Text('История прочитана!'),
+          ],
+        ),
         content: const Text('Отличная работа! +40 XP'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Ура!')),

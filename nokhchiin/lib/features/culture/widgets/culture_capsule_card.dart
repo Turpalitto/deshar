@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/design/app_icons.dart';
+import '../../../core/design/widgets/app_icon_image.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../domain/entities/culture_capsule.dart';
 
@@ -88,11 +90,11 @@ class CultureCapsuleCard extends StatelessWidget {
                           const SizedBox(height: IosSpacing.x6),
                           Row(
                             children: [
-                              _FactChip(emoji: '🤝', label: 'Уважение'),
+                              _FactChip(iconAsset: AppIcons.cultureHandshake, label: 'Уважение'),
                               const SizedBox(width: 10),
-                              _FactChip(emoji: '🍽️', label: 'Стол'),
+                              _FactChip(iconAsset: AppIcons.cultureFeast, label: 'Стол'),
                               const SizedBox(width: 10),
-                              _FactChip(emoji: '🏔️', label: 'Нохчалла'),
+                              _FactChip(iconAsset: AppIcons.cultureMountains, label: 'Нохчалла'),
                             ],
                           ),
                           const SizedBox(height: IosSpacing.x6),
@@ -182,7 +184,7 @@ class _CapsuleIllustration extends StatelessWidget {
                   ),
                 ),
                 alignment: Alignment.center,
-                child: const Text('🏠', style: TextStyle(fontSize: 72)),
+                child: const AppIconImage(asset: AppIcons.cultureHeritage, size: 72),
               ),
       ),
     );
@@ -190,9 +192,14 @@ class _CapsuleIllustration extends StatelessWidget {
 }
 
 class _FactChip extends StatelessWidget {
-  const _FactChip({required this.emoji, required this.label});
+  const _FactChip({
+    this.emoji,
+    this.iconAsset,
+    required this.label,
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String label;
 
   @override
@@ -206,7 +213,10 @@ class _FactChip extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 24)),
+            if (iconAsset != null)
+              AppIconImage(asset: iconAsset!, size: 24)
+            else
+              Text(emoji!, style: const TextStyle(fontSize: 24)),
             const SizedBox(height: 6),
             Text(
               label,

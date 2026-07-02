@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/loading_state.dart';
+import '../../core/design/app_icons.dart';
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/content_providers.dart';
 import '../../core/providers/providers.dart';
@@ -54,11 +55,13 @@ class WorldsMapScreen extends ConsumerWidget {
               final color = Color(int.parse(gradient.first.replaceFirst('#', '0xFF')));
               final unitIds = (w['units'] as List).cast<String>();
 
+              final worldEmoji = w['emoji'] as String?;
               return NokhchiinWorldCard(
                 index: i,
                 title: w['titleRu'] as String,
                 description: w['subtitleRu'] as String? ?? w['titleCe'] as String? ?? '',
-                emoji: w['emoji'] as String? ?? '🌍',
+                emoji: worldEmoji,
+                iconAsset: worldEmoji == null ? AppIcons.navWorlds : null,
                 progressPercent: pct,
                 lessonCount: unitIds.length,
                 color: color,

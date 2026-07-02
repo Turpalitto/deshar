@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design/tokens/app_spacing.dart';
+import '../../core/design/app_icons.dart';
 import '../../core/design/widgets/app_button.dart';
 import '../../core/design/widgets/app_scaffold.dart';
 import '../../core/design/widgets/loading_state.dart';
+import '../../core/design/widgets/app_icon_image.dart';
 import '../../core/design/widgets/reward_celebration.dart';
 import '../../core/design/widgets/progress_ring.dart';
 import '../../core/providers/providers.dart';
@@ -55,7 +57,7 @@ class _LessonFlowScreenState extends ConsumerState<LessonFlowScreen> {
     if (showChest) {
       await RewardCelebration.show(
         context,
-        emoji: '🎁',
+        iconAsset: AppIcons.rewardChest,
         title: 'Сундук!',
         subtitle: '+25 монет · +30 XP',
         dismissLabel: 'Круто!',
@@ -70,7 +72,7 @@ class _LessonFlowScreenState extends ConsumerState<LessonFlowScreen> {
 
     await RewardCelebration.show(
       context,
-      emoji: '🏆',
+      iconAsset: AppIcons.rewardTrophy,
       title: 'Урок завершён!',
       subtitle: showChest ? '+40 XP · +10 монет · бонусы' : '+40 XP · +10 монет',
       primaryAction: hasNext ? 'Дальше: ${next.titleRu}' : null,
@@ -155,7 +157,7 @@ class _RewardStep extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('🏆', style: TextStyle(fontSize: 80)),
+            const AppIconImage(asset: AppIcons.rewardTrophy, size: 80),
             const SizedBox(height: AppSpacing.lg),
             Text('Отлично!', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),

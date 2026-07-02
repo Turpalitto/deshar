@@ -2,12 +2,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/design/tokens/app_durations.dart';
-import '../../core/design/tokens/app_spacing.dart';
-import '../../core/design/widgets/app_button.dart';
-import '../../core/design/widgets/app_card.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/loading_state.dart';
+import '../../core/design/tokens/app_durations.dart'; // intentional-mix: motion tokens; Figma widgets from design_system
+import '../../core/design/tokens/app_spacing.dart'; // intentional-mix: spacing tokens
+import '../../core/design/widgets/app_button.dart'; // intentional-mix: legacy button in dialogs
+import '../../core/design/widgets/app_card.dart'; // intentional-mix: legacy card container
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
 import '../../core/design_system/design_system.dart';
 import '../../core/providers/providers.dart';
 import '../../domain/entities/word_entity.dart';

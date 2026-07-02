@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import '../tokens/app_spacing.dart';
 import 'app_button.dart';
+import 'app_icon_image.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.title,
     this.subtitle,
     this.actionLabel,
     this.onAction,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String title;
   final String? subtitle;
   final String? actionLabel;
@@ -26,7 +29,10 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 56)),
+            if (iconAsset != null)
+              AppIconImage(asset: iconAsset!, size: 56)
+            else
+              Text(emoji!, style: const TextStyle(fontSize: 56)),
             const SizedBox(height: AppSpacing.lg),
             Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             if (subtitle != null) ...[

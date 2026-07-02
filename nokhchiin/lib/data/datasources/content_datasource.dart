@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+import '../../core/utils/app_logger.dart';
+
 class ContentDataSource {
   Future<List<Map<String, dynamic>>> loadWorlds() async {
     final raw = await rootBundle.loadString('assets/data/worlds.json');
@@ -28,7 +30,8 @@ class ContentDataSource {
     final all = await loadStories();
     try {
       return all.firstWhere((s) => s['id'] == id);
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.warn('Story not found by id: $id', error: e, stackTrace: st);
       return null;
     }
   }
@@ -42,7 +45,8 @@ class ContentDataSource {
     final all = await loadBosses();
     try {
       return all.firstWhere((b) => b['unitId'] == unitId);
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.warn('Boss not found for unit: $unitId', error: e, stackTrace: st);
       return null;
     }
   }

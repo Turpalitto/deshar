@@ -6,15 +6,16 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/config/feature_flags.dart';
 import '../../core/design/tokens/app_spacing.dart';
+import '../../core/design/app_icons.dart';
 import '../../core/design/widgets/app_button.dart';
 import '../../core/design/widgets/app_card.dart';
 import '../../core/design/widgets/app_scaffold.dart';
+import '../../core/design/widgets/app_icon_image.dart';
 import '../../core/design/widgets/loading_state.dart';
 import '../../core/design/widgets/word_exercise_card.dart';
 import '../../core/providers/content_providers.dart';
 import '../../core/providers/providers.dart';
 import '../../core/services/audio_service.dart';
-import '../../core/design/widgets/app_button.dart';
 import '../../domain/entities/word_entity.dart';
 
 final _audioProvider = Provider((_) => AudioService());
@@ -96,7 +97,14 @@ class _BossScreenState extends ConsumerState<BossScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(won ? 'Победа! 🏆' : 'Попробуй ещё'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (won) const AppIconImage(asset: AppIcons.rewardTrophy, size: 28),
+            if (won) const SizedBox(width: 10),
+            Text(won ? 'Победа!' : 'Попробуй ещё'),
+          ],
+        ),
         content: Text(
           won
               ? 'Счёт: $_score / ${_words.length}\nНовый мир открыт!'

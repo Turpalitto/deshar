@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import '../../design/widgets/app_icon_image.dart';
 import '../design_system.dart';
 
 /// Строка настроек профиля (Figma Make).
 class NokhchiinSettingsRow extends StatelessWidget {
   const NokhchiinSettingsRow({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.label,
     this.onTap,
     this.trailing,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String label;
   final VoidCallback? onTap;
   final Widget? trailing;
@@ -26,7 +29,10 @@ class NokhchiinSettingsRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 20)),
+            if (iconAsset != null)
+              AppIconImage(asset: iconAsset!, size: 20, color: tokens.accent)
+            else
+              Text(emoji!, style: const TextStyle(fontSize: 20)),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

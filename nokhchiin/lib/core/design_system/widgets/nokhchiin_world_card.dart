@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../design/app_icons.dart';
+import '../../design/widgets/app_icon_image.dart';
 import '../design_system.dart';
 
 /// Карточка мира — список на экране «Миры» (Figma Make).
@@ -8,18 +10,20 @@ class NokhchiinWorldCard extends StatelessWidget {
     required this.index,
     required this.title,
     required this.description,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.progressPercent,
     required this.lessonCount,
     required this.color,
     this.unlocked = true,
     this.onTap,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
   final int index;
   final String title;
   final String description;
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final int progressPercent;
   final int lessonCount;
   final Color color;
@@ -88,7 +92,9 @@ class NokhchiinWorldCard extends StatelessWidget {
                   strokeWidth: 5,
                   color: Colors.white,
                   trackColor: Colors.white.withValues(alpha: 0.25),
-                  center: Text(emoji, style: const TextStyle(fontSize: 26)),
+                  center: iconAsset != null
+                      ? AppIconImage(asset: iconAsset!, size: 26, color: Colors.white)
+                      : Text(emoji!, style: const TextStyle(fontSize: 26)),
                 ),
               ],
             ),
@@ -125,15 +131,17 @@ class NokhchiinWorldCard extends StatelessWidget {
 class NokhchiinWorldRow extends StatelessWidget {
   const NokhchiinWorldRow({
     super.key,
-    required this.emoji,
+    this.emoji,
+    this.iconAsset,
     required this.title,
     required this.progressPercent,
     required this.color,
     this.unlocked = true,
     this.onTap,
-  });
+  }) : assert(emoji != null || iconAsset != null);
 
-  final String emoji;
+  final String? emoji;
+  final String? iconAsset;
   final String title;
   final int progressPercent;
   final Color color;
@@ -157,7 +165,9 @@ class NokhchiinWorldRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
-            child: Text(emoji, style: const TextStyle(fontSize: 22)),
+            child: iconAsset != null
+                ? AppIconImage(asset: iconAsset!, size: 22, color: color)
+                : Text(emoji!, style: const TextStyle(fontSize: 22)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -186,10 +196,13 @@ class NokhchiinWorldRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            unlocked ? '$progressPercent%' : '🔒',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: color),
-          ),
+          if (unlocked)
+            Text(
+              '$progressPercent%',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: color),
+            )
+          else
+            AppIconImage(asset: AppIcons.stateLocked, size: 16, color: tokens.textTertiary),
         ],
       ),
     );

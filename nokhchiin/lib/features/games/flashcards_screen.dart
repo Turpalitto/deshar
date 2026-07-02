@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/design/tokens/app_spacing.dart';
+import '../../core/design/tokens/app_spacing.dart'; // intentional-mix: spacing tokens; Figma widgets from design_system
+import '../../core/design/app_icons.dart';
 import '../../core/design/widgets/app_button.dart';
-import '../../core/design/widgets/app_scaffold.dart';
-import '../../core/design/widgets/loading_state.dart';
+import '../../core/design/widgets/app_icon_image.dart'; // intentional-mix: reward dialog actions
+import '../../core/design/widgets/app_scaffold.dart'; // intentional-mix: app shell scaffold
+import '../../core/design/widgets/loading_state.dart'; // intentional-mix: shared loading placeholder
 import '../../core/providers/providers.dart';
 import '../../domain/entities/enums.dart';
 import '../../domain/entities/word_entity.dart';
@@ -84,7 +86,14 @@ class _FlashcardsScreenState extends ConsumerState<FlashcardsScreen> {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Урок пройден! 🎉'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const AppIconImage(asset: AppIcons.rewardCelebration, size: 28),
+            const SizedBox(width: 10),
+            const Text('Урок пройден!'),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -237,7 +246,10 @@ class _FlashcardContent extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(word.emoji ?? '📖', style: const TextStyle(fontSize: 80)),
+                if (word.emoji != null)
+                  Text(word.emoji!, style: const TextStyle(fontSize: 80))
+                else
+                  const AppIconImage(asset: AppIcons.navDictionary, size: 80),
                 const SizedBox(height: 16),
                 Text(
                   showRussian ? word.russian : word.chechen,
